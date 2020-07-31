@@ -3,5 +3,5 @@ npm-debug.log
 Dockerfile
 .dockerignore
 docker_create.sh
-lamp_motion_config.sh
 import-data
+iot-data
