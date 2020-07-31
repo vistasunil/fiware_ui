@@ -1,0 +1,111 @@
+#!/bin/bash
+#
+#  curl commands to reload the data from the previous tutorial
+#
+#
+
+set -e
+
+printf "⏳ Loading context data "
+
+#
+# Create four Store Entities in various locations across Berlin
+#
+curl -s -o /dev/null -X POST \
+  'http://orion:1026/v2/op/update' \
+  -H 'Content-Type: application/json' \
+  -g -d '{
+  "actionType": "append",
+  "entities": [
+                "id": "urn:ngsi-ld:Streetlight:streetlight:001",
+                "type": "Streetlight",
+                "location": {
+                        "type": "GeoProperty",
+                        "value": {
+                                "type": "Point",
+                                "coordinates": [-3.164485591715449, 40.62785133667262]
+                        }
+                },
+                "areaServed": {
+                        "type": "Property",
+                        "value": "Roundabouts city entrance"
+                },
+                "status": {
+                        "type": "Property",
+                        "type": "Property",
+                        "value": "ok"
+                },
+                "circuit": {
+                        "type": "Property",
+                        "value": "C-456-A467"
+                },
+                "lanternHeight": {
+                        "type": "Property",
+                        "value": 10
+                },
+                "locationCategory": {
+                        "type": "Property",
+                        "value": "centralIsland"
+                },
+                "powerState": {
+                        "type": "Property",
+                        "value": "off"
+                },
+                "controllingMethod": {
+                        "type": "Property",
+                        "value": "individual"
+                },
+                "dateLastLampChange": {
+                        "type": "Property",
+                        "value": {
+                                "@type": "DateTime",
+                                "@value": "2016-07-08T08:02:21.753Z"
+                        }
+                },
+                "id": "urn:ngsi-ld:Streetlight:streetlight:002",
+                "type": "Streetlight",
+                "location": {
+                        "type": "GeoProperty",
+                        "value": {
+                                "type": "Point",
+                                "coordinates": [-6.164485591715449, 30.62785133667262]
+                        }
+                },
+                "areaServed": {
+                        "type": "Property",
+                        "value": "Delhi Cantt Bypass"
+                },
+                "status": {
+                        "type": "Property",
+                        "value": "ok"
+                },
+                "circuit": {
+                        "type": "Property",
+                        "value": "C-456-A467"
+                },
+                "lanternHeight": {
+                        "type": "Property",
+                        "value": 10
+                },
+                "locationCategory": {
+                        "type": "Property",
+                        "value": "centralIsland"
+                },
+                "powerState": {
+                        "type": "Property",
+                        "value": "off"
+                },
+                "controllingMethod": {
+                        "type": "Property",
+                        "value": "individual"
+                },
+                "dateLastLampChange": {
+                        "type": "Property",
+                        "value": {
+                                "@type": "DateTime",
+                                "@value": "2016-07-08T08:02:21.753Z"
+                        }
+                }
+  ]
+}'
+
