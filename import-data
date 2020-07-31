@@ -109,3 +109,5 @@ curl -s -o /dev/null -X POST \
   ]
 }'
 
+
+echo -e " \033[1;32mStreetlights created successfully\033[0m"
