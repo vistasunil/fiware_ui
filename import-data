@@ -17,6 +17,7 @@ curl -s -o /dev/null -X POST \
   -g -d '{
   "actionType": "append",
   "entities": [
+        {
                 "id": "urn:ngsi-ld:Streetlight:streetlight:001",
                 "type": "Streetlight",
                 "location": {
@@ -61,7 +62,9 @@ curl -s -o /dev/null -X POST \
                                 "@type": "DateTime",
                                 "@value": "2016-07-08T08:02:21.753Z"
                         }
-                },
+                }
+        },
+        {
                 "id": "urn:ngsi-ld:Streetlight:streetlight:002",
                 "type": "Streetlight",
                 "location": {
@@ -106,6 +109,7 @@ curl -s -o /dev/null -X POST \
                                 "@value": "2016-07-08T08:02:21.753Z"
                         }
                 }
+        }
   ]
 }'
 
