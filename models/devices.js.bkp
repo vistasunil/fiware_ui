@@ -296,14 +296,9 @@ function getRandom() {
 }
 
 // Directly alter the state of a motion sensor.
-//function fireMotionSensor(id) {
-//    debug('fireMotionSensor');
-//    setDeviceState(id, MOTION_DETECTED, true);
-//}
-
-function fireMotionSensor(id,motionCounter) {
-  debug('fireMotionSensor');
-  setDeviceState(id, "c|"+ motionCounter, true);
+function fireMotionSensor(id) {
+    debug('fireMotionSensor');
+    setDeviceState(id, MOTION_DETECTED, true);
 }
 
 // Once a minute, read the existing state of the dummy devices

@@ -20,39 +20,23 @@ const NOTIFY_ATTRIBUTES = ['refStore', 'refProduct', 'refShelf', 'type', 'locate
 
 const NGSI_V2_STORES = [
     {
-        href: 'app/store/urn:ngsi-ld:Store:001',
-        name: 'Store 1'
+        href: 'app/store/urn:ngsi-ld:Streetlight:streetlight:001',
+        name: 'Streetlight 1'
     },
     {
-        href: 'app/store/urn:ngsi-ld:Store:002',
-        name: 'Store 2'
-    },
-    {
-        href: 'app/store/urn:ngsi-ld:Store:003',
-        name: 'Store 3'
-    },
-    {
-        href: 'app/store/urn:ngsi-ld:Store:004',
-        name: 'Store 4'
+        href: 'app/store/urn:ngsi-ld:Streetlight:streetlight:002',
+        name: 'Streetlight 2'
     }
 ];
 
 const NGSI_LD_STORES = [
     {
-        href: 'app/store/urn:ngsi-ld:Building:store001',
-        name: 'Store 1'
+        href: 'app/store/urn:ngsi-ld:Streetlight:streetlight:001',
+        name: 'Streetlight 1'
     },
     {
-        href: 'app/store/urn:ngsi-ld:Building:store002',
-        name: 'Store 2'
-    },
-   {
-       href: 'app/store/urn:ngsi-ld:Building:store003',
-       name: 'Store 3'
-   },
-    {
-        href: 'app/store/urn:ngsi-ld:Building:store004',
-        name: 'Store 4'
+        href: 'app/store/urn:ngsi-ld:Streetlight:streetlight:002',
+        name: 'Streetlight 2'
     }
 ];
 
