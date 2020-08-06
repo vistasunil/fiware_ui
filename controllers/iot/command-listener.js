@@ -74,7 +74,6 @@ function sendCommand(req, res) {
   if (action === 'presence' || action === 'close') {
     // The motion sensor does not accept commands,
     // Update the state of the device directly
-   // if (id === '001') id = '01';
     motionCounter = action === 'presence'? ++motionCounter : --motionCounter;
     IoTDevices.fireMotionSensor('motion' + id,motionCounter);
     if(motionCounter>=5){
