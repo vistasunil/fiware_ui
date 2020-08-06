@@ -1,0 +1,132 @@
+#!/bin/bash
+#
+#  curl commands to reload the data from the previous tutorial
+#
+#
+
+set -e
+
+printf " Loading context data "
+
+#
+# Create four Store Entities in various locations across Berlin
+#
+curl -s -o /dev/null POST \
+  'http://orion:1026/v2/op/update?options=keyValues' \
+  -H 'Content-Type: application/json' \
+  -g -d '{
+  "actionType": "append",
+  "entities": [
+  	{
+                "id": "urn:ngsi-ld:Streetlight:streetlight:001",
+                "type": "Streetlight",
+                "location": {
+                        "type": "geo:json",
+                        "value": {
+                                "type": "Point",
+                                "coordinates": [13.3903, 52.5075]
+                        }
+                },
+		"name": {
+     		        "type": "Text",
+      		        "value": "Streelight 1"
+		},
+                "areaServed": {
+                        "type": "Property",
+                        "value": "Roundabouts city entrance"
+                },
+                "status": {
+                        "type": "Property",
+                        "value": "ok"
+                },
+                "circuit": {
+                        "type": "Property",
+                        "value": "C-456-A467"
+                },
+                "lanternHeight": {
+                        "type": "Property",
+                        "value": 10
+                },
+                "locationCategory": {
+                        "type": "Property",
+                        "value": "centralIsland"
+                },
+                "powerState": {
+                        "type": "Property",
+                        "value": "off"
+                },
+                "controllingMethod": {
+                        "type": "Property",
+                        "value": "individual"
+                },
+                "dateLastLampChange": {
+                        "type": "Property",
+                        "value": {
+                                "@type": "DateTime",
+                                "@value": "2016-07-08T08:02:21.753Z"
+                        }
+                },
+                "@context": [
+					"https://schema.lab.fiware.org/ld/context",
+					"https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
+		]
+	},
+	{
+                "id": "urn:ngsi-ld:Streetlight:streetlight:002",
+                "type": "Streetlight",
+                "location": {
+                        "type": "geo:json",
+                        "value": {
+                                "type": "Point",
+                                "coordinates": [13.3903, 52.5075]
+                        }
+                },
+                "name": {
+                        "type": "Text",
+                        "value": "Streelight 1"
+                },
+                "areaServed": {
+                        "type": "Property",
+                        "value": "Delhi Cantt Bypass"
+                },
+                "status": {
+                        "type": "Property",
+                        "value": "ok"
+                },
+                "circuit": {
+                        "type": "Property",
+                        "value": "C-456-A467"
+                },
+                "lanternHeight": {
+                        "type": "Property",
+                        "value": 10
+                },
+                "locationCategory": {
+                        "type": "Property",
+                        "value": "centralIsland"
+                },
+                "powerState": {
+                        "type": "Property",
+                        "value": "off"
+                },
+                "controllingMethod": {
+                        "type": "Property",
+                        "value": "individual"
+                },
+                "dateLastLampChange": {
+                        "type": "Property",
+                        "value": {
+                                "@type": "DateTime",
+                                "@value": "2016-07-08T08:02:21.753Z"
+                        }
+                },
+                "@context": [
+					"https://schema.lab.fiware.org/ld/context",
+					"https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
+		]
+	}
+  ]
+}'
+
+#curl -X GET 'http://orion:1026/v2/entities'|jq
+echo -e " \033[1;32mStreetlights created successfully\033[0m"
