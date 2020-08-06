@@ -11,7 +11,7 @@ printf " Loading context data "
 #
 # Create four Store Entities in various locations across Berlin
 #
-curl -iX POST \
+curl -s -o /dev/null POST \
   'http://orion:1026/v2/op/update?options=keyValues' \
   -H 'Content-Type: application/json' \
   -g -d '{
