@@ -61,7 +61,7 @@ function broadcastEvents(req, item, types) {
 
 // Handles requests to the main page
 router.get('/', function (req, res) {
-    const securityEnabled = SECURE_ENDPOINTS;
+    const securityEnabled = false ;//SECURE_ENDPOINTS;
     const oidcEnabled = OIDC_ENABLED;
     const stores = NGSI_VERSION === 'ngsi-v2' ? NGSI_V2_STORES : NGSI_LD_STORES;
     res.render('index', {
@@ -99,7 +99,7 @@ router.get('/version', function (req, res) {
 router.get('/device/monitor', function (req, res) {
     const traffic = TRANSPORT === 'HTTP' ? 'Northbound Traffic' : 'MQTT Messages';
     const title = 'Streetlight IOT Devices (' + DEVICE_PAYLOAD + ' over ' + TRANSPORT + ')';
-    const securityEnabled = SECURE_ENDPOINTS;
+    const securityEnabled = false ; //SECURE_ENDPOINTS;
     const oidcEnabled = OIDC_ENABLED;
     res.render('device-monitor', {
         title,

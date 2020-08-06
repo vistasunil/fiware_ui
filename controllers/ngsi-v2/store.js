@@ -57,15 +57,17 @@ function mapTileUrl(zoom, location) {
 function displayStore(req, res) {
     debug('displayStore');
     // If the user is not authorized, display the main page.
-    if (!res.locals.authorized) {
-        req.flash('error', 'Access Denied');
-        return res.redirect('/');
-    }
+//    if (!res.locals.authorized) {
+ //       req.flash('error', 'Access Denied');
+ //       return res.redirect('/');
+ //   }
     monitor('NGSI', 'retrieveEntity ' + req.params.storeId);
-    return retrieveEntity(req.params.storeId, { options: 'keyValues', type: 'Store' }, setAuthHeaders(req))
+	console.log(req.params.storeId);
+    return retrieveEntity(req.params.storeId, { options: 'keyValues', type: 'Streetlight' }, setAuthHeaders(req))
         .then((store) => {
             // If a store has been found display it on screen
             store.mapUrl = mapTileUrl(15, store.location);
+	    console.log(store.location);
             return res.render('store', { title: store.name, store, ngsi: 'ngsi-v2' });
         })
         .catch((error) => {

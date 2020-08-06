@@ -382,12 +382,12 @@ function hybridOICGrantCallback(req, res) {
 // LEVEL 1: AUTHENTICATION ONLY - Any user is authorized, just ensure the user exists.
 function authenticate(req, res, next) {
     debug('authenticate');
-
-    if (!SECURE_ENDPOINTS) {
-        res.locals.authorized = true;
-    } else {
-        res.locals.authorized = !!req.session.access_token;
-    }
+//
+//    if (!SECURE_ENDPOINTS) {
+//        res.locals.authorized = true;
+//    } else {
+//        res.locals.authorized = !!req.session.access_token;
+//    }
     return next();
 }
 
