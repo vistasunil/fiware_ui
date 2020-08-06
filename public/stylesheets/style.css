@@ -43,6 +43,10 @@ ul.devices {
   color: #efefefef;
   padding: 2px 6px 2px 6px;
   border-top: 1px solid #CCCCCC;
+  width: 100px;
+  display: inline-block;
+  float:left;
+  margin: 5px;
 }
 
 .info code{

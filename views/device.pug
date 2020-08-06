@@ -1,34 +1,46 @@
 mixin devicesForStore(id)
   p(style="color:#000000;")
     strong Devices on Streetlight 
+      br
       code(style="font-size:large") urn:ngsi-ld:Streetlight:streetlight:#{id}
       br
   ul.devices
-    li.device(style="background-image: url('/img/motion-sensor.svg')")
-      code 
-        strong motion#{id}
-        | &nbsp;
-        span(id=`motion${id}`)
-        | &nbsp;
-        form.device(action="/device/command")
-          input(type="text" style="display:none"  name="id" value=`${id}`)
-          input(type="hidden" name="action" value="presence")
-          input(type="submit" value="Detect Motion" class="button")
-    br
-    li.device(style="background-image: url('/img/lamp-off.svg')")
-      code 
-        strong lamp#{id}
-        | &nbsp;
-        span(id=`lamp${id}`)
-        | &nbsp;
-        form.device(action="/device/command")
-          input(type="text" style="display:none"  name="id" value=`${id}`)
-          input(type="hidden" name="action" value="on")
-          input(type="submit" value="Lamp On" class="button")
-        form.device(action="/device/command")
-          input(type="text" style="display:none"  name="id" value=`${id}`)
-          input(type="hidden" name="action" value="off")
-          input(type="submit" value="Lamp Off" class="button")
+    .btn-group(style="background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,0.5917717428768383) 35%, rgba(0,212,255,1) 100%); border: 1px solid green; color: white; padding: 10px 15px; cursor: pointer; float: left;border-radius:10%;margin:5px")
+      li.device(style="background-image: url('/img/motion-sensor.svg')")
+        code 
+          strong motion#{id}
+          | &nbsp;
+          span(id=`motion${id}`)
+          | &nbsp;
+          form.device(action="/device/command")
+            input(type="text" style="display:none"  name="id" value=`${id}`)
+            input(type="hidden" name="action" value="presence")
+            br
+            input(type="submit" value="Move In" class="button")
+          form.device(action="/device/command")
+            input(type="text" style="display:none"  name="id" value=`${id}`)
+            input(type="hidden" name="action" value="close")
+            input(type="submit" value="Move Out" class="button")
+    .btn-group(style="background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,0.5917717428768383) 35%, rgba(0,212,255,1) 100%); border: 1px solid green; color: white; padding: 10px 15px; cursor: pointer; float: left;border-radius:10%;margin:5px")
+      li.device(style="background-image: url('/img/lamp-off.svg')")
+        code 
+          strong lamp#{id}
+          | &nbsp;
+          span(id=`lamp${id}`)
+          | &nbsp;
+          form.device(action="/device/command")
+            input(type="text" style="display:none"  name="id" value=`${id}`)
+            input(type="hidden" name="action" value="on")
+            br
+            input(type="submit" value="Lamp On" class="button")
+          form.device(action="/device/command")
+            input(type="text" style="display:none"  name="id" value=`${id}`)
+            input(type="hidden" name="action" value="off")
+            input(type="submit" value="Lamp Off" class="button")
+  br
+  br
+
+
 //-
   form.device(action="/device/command")
    input(type="text" style="display:none"  name="id" value=`${id}`)

@@ -4,7 +4,8 @@ include device
 
 block content
   h1= title
-  
+  br 
+  br
   script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js')
   script(src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js')
   script(src='https://code.jquery.com/jquery-1.11.1.js')
@@ -18,13 +19,16 @@ block content
     | &nbsp;the alarm bell. 
 
   div.container
-    fieldset(style="border:1;width:50%;background-image: url('/img/cubes.jpg')")
+    fieldset(style="border:0;width:3%")
+    fieldset(style="border:1;width:40%;height:240px;border-radius: 10%;background-image: url('/img/cubes.jpg')")
       br
       div
         +devicesForStore('001')
       br
       br
-    fieldset(style="border:1;width:50%;background-image: url('/img/cubes.jpg')")
+    br
+    fieldset(style="border:0;width:4%")
+    fieldset(style="border:1;width:40%;height:240px;border-radius: 10%;background-image: url('/img/cubes.jpg')")
       br
       div
         +devicesForStore('002')
