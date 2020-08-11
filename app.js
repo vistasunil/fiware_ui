@@ -11,7 +11,7 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const SECRET = process.env.SESSION_SECRET || crypto.randomBytes(20).toString('hex');
 const NGSI_VERSION = process.env.NGSI_VERSION || 'ngsi-v2';
-
+console.log(process.env.NGSI_VERSION);
 const app = express();
 const mongoose = require('mongoose');
 

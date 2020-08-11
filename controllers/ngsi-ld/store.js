@@ -43,10 +43,10 @@ function mapTileUrl(zoom, location) {
 async function displayStore(req, res) {
     debug('displayStore');
     // If the user is not authorized, display the main page.
-    if (!res.locals.authorized) {
-        req.flash('error', 'Access Denied');
-        return res.redirect('/');
-    }
+//    if (!res.locals.authorized) {
+ //       req.flash('error', 'Access Denied');
+ //       return res.redirect('/');
+  //  }
     try {
         monitor('NGSI', 'readEntity ' + req.params.storeId);
         const store = await ngsiLD.readEntity(
