@@ -58,6 +58,8 @@ function createNGSILDRequest(action, id) {
 }
 let motionCounter1 = 0;
 let motionCounter2 = 0;
+let motionCounter3 = 0;
+let motionCounter4 = 0;
 
 // This function allows a Bell, Door or Lamp command to be sent to the Dummy IoT devices
 // via the Orion Context Broker and an IoT Agent.
@@ -103,6 +105,35 @@ function sendCommand(req, res) {
       return res.status(204).send();
     }
   }
+
+    if( id == 003 ){
+    motionCounter3 = action === 'close' && motionCounter3 > 0? --motionCounter3 : ++motionCounter3;
+           console.log(motionCounter3);
+    IoTDevices.fireMotionSensor('motion' + id,motionCounter3);
+    if(motionCounter3>=5){
+      action='on';
+    }else if(motionCounter3<5){
+      action='off';
+    }
+    else{
+      return res.status(204).send();
+    }
+  }
+
+    if( id == 004 ){
+    motionCounter4 = action === 'close' && motionCounter4 > 0? --motionCounter4 : ++motionCounter4;
+           console.log(motionCounter4);
+    IoTDevices.fireMotionSensor('motion' + id,motionCounter4);
+    if(motionCounter4>=5){
+      action='on';
+    }else if(motionCounter4<5){
+      action='off';
+    }
+    else{
+      return res.status(204).send();
+    }
+  }
+
       
   }
 

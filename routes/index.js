@@ -20,23 +20,39 @@ const NOTIFY_ATTRIBUTES = ['refStore', 'refProduct', 'refShelf', 'type', 'locate
 
 const NGSI_V2_STORES = [
     {
-        href: 'app/store/urn:ngsi-ld:Streetlight:streetlight:001',
-        name: 'Streetlight 1'
+        href: 'app/store/' + process.env.Streetlight1_urn, //'app/store/urn:ngsi-ld:Streetlight:streetlight:mexico:4567',
+        name: process.env.Streetlight1_name //'Streetlight Mexico 4567'
     },
     {
-        href: 'app/store/urn:ngsi-ld:Streetlight:streetlight:002',
-        name: 'Streetlight 2'
+        href: 'app/store/' + process.env.Streetlight2_urn, //'app/store/urn:ngsi-ld:Streetlight:streetlight:guadalajara:4567',
+        name: process.env.Streetlight2_name //'Streetlight Guadalajara 4567'
+    },
+    {
+        href: 'app/store/' + process.env.Streetlight3_urn, // 'app/store/urn:ngsi-ld:Streetlight:streetlight:mexico:5000',
+        name: process.env.Streetlight3_name //'Streetlight Mexico 5000'
+    },
+    {
+        href: 'app/store/' + process.env.Streetlight4_urn, //'app/store/urn:ngsi-ld:Streetlight:streetlight:mexico:9000',
+        name: process.env.Streetlight4_name //'Streetlight Mexico 9000'
     }
 ];
 
 const NGSI_LD_STORES = [
     {
-        href: 'app/store/urn:ngsi-ld:Streetlight:streetlight:001',
-        name: 'Streetlight 1'
+        href: 'app/store/' + process.env.Streetlight1_urn, //'app/store/urn:ngsi-ld:Streetlight:streetlight:mexico:4567',
+        name: process.env.Streetlight1_name //'Streetlight Mexico 4567'
     },
     {
-        href: 'app/store/urn:ngsi-ld:Streetlight:streetlight:002',
-        name: 'Streetlight 2'
+        href: 'app/store/' + process.env.Streetlight2_urn, //'app/store/urn:ngsi-ld:Streetlight:streetlight:guadalajara:4567',
+        name: process.env.Streetlight2_name //'Streetlight Guadalajara 4567'
+    },
+    {
+        href: 'app/store/' + process.env.Streetlight3_urn, // 'app/store/urn:ngsi-ld:Streetlight:streetlight:mexico:5000',
+        name: process.env.Streetlight3_name //'Streetlight Mexico 5000'
+    },
+    {
+        href: 'app/store/' + process.env.Streetlight4_urn, //'app/store/urn:ngsi-ld:Streetlight:streetlight:mexico:9000',
+        name: process.env.Streetlight4_name //'Streetlight Mexico 9000'
     }
 ];
 
@@ -98,7 +114,7 @@ router.get('/version', function (req, res) {
 // Render the monitoring page
 router.get('/device/monitor', function (req, res) {
     const traffic = TRANSPORT === 'HTTP' ? 'Northbound Traffic' : 'MQTT Messages';
-    const title = 'Streetlight IOT Devices (' + DEVICE_PAYLOAD + ' over ' + TRANSPORT + ')';
+    const title = 'Streetlight Control Panel (' + DEVICE_PAYLOAD + ' over ' + TRANSPORT + ')';
     const securityEnabled = false ; //SECURE_ENDPOINTS;
     const oidcEnabled = OIDC_ENABLED;
     res.render('device-monitor', {
