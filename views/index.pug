@@ -68,6 +68,7 @@ block content
     h3 Streetlight Details
     - if (securityEnabled)
       p Any logged-in user can access these:
+      button(type='button',onclick='load()') Reload
       each store in stores
         a.red(href=`${store.href}`)  #{store.name}
         | &nbsp;

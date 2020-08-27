@@ -18,6 +18,30 @@ const AUTHZFORCE_ENABLED = process.env.AUTHZFORCE_ENABLED || false;
 
 const NOTIFY_ATTRIBUTES = ['refStore', 'refProduct', 'refShelf', 'type', 'locatedIn', 'stocks'];
 
+const axios = require('axios');
+const fs = require('fs');
+var sleep = require('system-sleep');
+var NGSI_V2_STS = [];
+
+/*axios.get('http://orion:1026/ngsi-ld/v1/entities?type=Streetlight&options=keyValues')
+    .then(response => {
+        //console.log(response.data);
+		const data = response.data;
+		for (var i in data){
+			NGSI_V2_STS.push({"href": data[i].id , "name": (data[i].id).split(":").reverse()[1] + " " + (data[i].id).split(":").reverse()[0]})
+		}
+        fs.writeFile('response.json', JSON.stringify(NGSI_V2_STS), function (err) {
+            //console.log(err);
+        });
+    })
+    .catch(err => {
+        console.log(err)
+    });
+*/
+//sleep(3*1000);
+const NGSI_LD_STORES = JSON.parse(fs.readFileSync('response.json'))  // .replace(/"/g,"'");
+
+console.log(NGSI_LD_STORES);
 const NGSI_V2_STORES = [
     {
         href: 'app/store/' + process.env.Streetlight1_urn, //'app/store/urn:ngsi-ld:Streetlight:streetlight:mexico:4567',
@@ -37,7 +61,7 @@ const NGSI_V2_STORES = [
     }
 ];
 
-const NGSI_LD_STORES = [
+/*const NGSI_LD_STORES = [
     {
         href: 'app/store/' + process.env.Streetlight1_urn, //'app/store/urn:ngsi-ld:Streetlight:streetlight:mexico:4567',
         name: process.env.Streetlight1_name //'Streetlight Mexico 4567'
@@ -54,7 +78,7 @@ const NGSI_LD_STORES = [
         href: 'app/store/' + process.env.Streetlight4_urn, //'app/store/urn:ngsi-ld:Streetlight:streetlight:mexico:9000',
         name: process.env.Streetlight4_name //'Streetlight Mexico 9000'
     }
-];
+];*/
 
 // Error handler for async functions
 function catchErrors(fn) {

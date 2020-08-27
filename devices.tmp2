@@ -1,0 +1,4 @@
+
+myCache.set('lampdevice_id1', LAMP_OFF);
+myCache.set('motiondevice_id1', NO_MOTION_DETECTED);
+

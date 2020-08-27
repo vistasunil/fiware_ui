@@ -1,0 +1,1 @@
+* * * * *  /usr/src/app/fetch.sh  >> /var/log/cron.log 2>&1

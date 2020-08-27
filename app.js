@@ -14,6 +14,10 @@ const NGSI_VERSION = process.env.NGSI_VERSION || 'ngsi-v2';
 console.log(process.env.NGSI_VERSION);
 const app = express();
 const mongoose = require('mongoose');
+const axios = require('axios');
+const fs = require('fs');
+var sleep = require('system-sleep');
+var NGSI_V2_STS = [];
 
 const MONGO_DB = process.env.MONGO_URL ? process.env.MONGO_URL : 'mongodb://mongo-db:27017/address';
 
@@ -75,10 +79,47 @@ if (NGSI_VERSION === 'ngsi-ld') {
 app.use('/health', healthRouter);
 app.use('/', indexRouter);
 
+const { spawn } = require('child_process')
+app.get('/foo', function(req, res) {
+    // Call your python script here.
+    // I prefer using spawn from the child process module instead of the Python shell
+    const scriptPath = 'public/store.js'
+    const process = spawn('node', [scriptPath])
+    process.stdout.on('data', (myData) => {
+        // Do whatever you want with the returned data.
+        // ...
+        res.send("Done")
+    })
+    process.stderr.on('data', (myErr) => {
+        // If anything gets written to stderr, it'll be in the myErr variable
+    })
+})
+/*
+app.get('/foo1', function(req, res) {
+  axios.get('http://orion:1026/ngsi-ld/v1/entities?type=Streetlight&options=keyValues')
+    .then(response => {
+        //console.log(response.data);
+                const data = response.data;
+                for (var i in data){
+                        NGSI_V2_STS.push({"href": data[i].id , "name": (data[i].id).split(":").reverse()[1] + " " + (data[i].id).split(":").reverse()[0]})
+                }
+        fs.writeFile('response.json', JSON.stringify(NGSI_V2_STS), function (err) {
+            //console.log(err);
+        });
+        console.log(NGSI_V2_STS);
+    })
+    .catch(err => {
+        console.log(err)
+    });
+})
+*/
+
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     next(createError(404));
 });
+
 
 // error handler
 // eslint-disable-next-line no-unused-vars

@@ -1,0 +1,15 @@
+
+    if( id == device_id1 ){
+    motionCounterdevice_id1 = action === 'close' && motionCounterdevice_id1 > 0? --motionCounterdevice_id1 : ++motionCounterdevice_id1;
+	   console.log(motionCounterdevice_id1);
+    IoTDevices.fireMotionSensor('motion' + id,motionCounterdevice_id1);
+    if(motionCounterdevice_id1>=5){
+      action='on';
+    }else if(motionCounterdevice_id1<5){
+      action='off';
+    }
+    else{
+      return res.status(204).send();
+    }
+  }
+

@@ -12,20 +12,22 @@ block content
           | © OpenStreetMap contributors
     div(style="float:left; padding:20px; border:none;")
       name
-        strong ID:
+        strong ID: 
         | #{store.id} #[br]
       address
-        strong Satus:
+        strong Satus: 
         | #{store.status} #[br]
-        strong Area Served:
+        strong Area Served: 
         | #{store.areaServed} #[br]
-        strong Circuit:
+        strong Circuit: 
         | #{store.circuit} #[br]
-        strong Lantern Height:
+        strong Lantern Height: 
         | #{store.lanternHeight} #[br]
-        strong Location Category:
+        strong Location Category: 
         | #{store.locationCategory} #[br]
-        strong Power State:
+        strong Power State: 
         | #{store.powerState} #[br]
-        strong Controlling Method:
+        strong Controlling Method: 
         | #{store.controllingMethod} #[br]
+        strong Date Time Last Change:
+        | #{store.dateLastLampChange[0]} #[br]

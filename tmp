@@ -1,334 +1,181 @@
-//
-// This controller is simulates a series of devices.
-// The internal state is maintained using the Ultralight protocol
-//
+extends layout
 
-/* global SOCKET_IO */
+include device
 
-const NodeCache = require('node-cache');
-const myCache = new NodeCache();
-const _ = require('lodash');
-const debug = require('debug')('tutorial:devices');
-const Northbound = require('../controllers/iot/northbound');
-const Southbound = require('../controllers/iot/southbound');
+block content
+  h1= title
+  br 
+  br
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js')
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js')
+  script(src='https://code.jquery.com/jquery-1.11.1.js')
+  body.bkimg
+  - if (securityEnabled)
+    p
+    | A user must be logged in to activate devices, only security staff are able to &nbsp;
+    strong unlock
+    | &nbsp;doors and only security and managers can &nbsp;
+    strong ring
+    | &nbsp;the alarm bell. 
 
-// A series of constants used by our set of devices
-const DOOR_LOCKED = 's|LOCKED';
-const DOOR_OPEN = 's|OPEN';
-const DOOR_CLOSED = 's|CLOSED';
+  div.container
+    fieldset(style="border:0;width:1%")
+    fieldset(style="border:1;width:40%;height:400px;border-radius: 10%;background-image: url('/img/cubesH.jpg')")
+      br
+      div
+        +devicesForStore('001','urn:ngsi-ld:Streetlight:streetlight:mexico:4000')
+      br
+      br
+    br
+    fieldset(style="border:0;width:1%")
+    fieldset(style="border:1;width:40%;height:400px;border-radius: 10%;background-image: url('/img/cubesH.jpg')")
+      br
+      div
+        +devicesForStore('002','urn:ngsi-ld:Streetlight:streetlight:guadalajara:4567')
+      br
+      br
+    br
+    fieldset(style="border:0;width:1%")
+    fieldset(style="border:1;width:40%;height:400px;border-radius: 10%;background-image: url('/img/cubesH.jpg')")
+      br
+      div
+        +devicesForStore('003','urn:ngsi-ld:Streetlight:streetlight:mexico:5000')
+      br
+      br
+    br
+    fieldset(style="border:0;width:1%")
+    fieldset(style="border:1;width:40%;height:400px;border-radius: 10%;background-image: url('/img/cubesH.jpg')")
+      br
+      div
+        +devicesForStore('004','urn:ngsi-ld:Streetlight:streetlight:mexico:9000')
+      br
+      br
+    br
+  br
+  br
 
-const BELL_OFF = 's|OFF';
-const BELL_ON = 's|ON';
+  div
+    hr
 
-const LAMP_ON = 's|ON|l|1750';
-const LAMP_OFF = 's|OFF|l|0';
+    h2= traffic
+    ul(id="northbound")
 
-const NO_MOTION_DETECTED = 'c|0';
-const MOTION_DETECTED = 'c|1';
+  hr
+  small
+    strong
+      - if (securityEnabled)
+        | Security ON. &nbsp;
+      - else
+        | Security OFF. &nbsp;
+    strong(id="audio") Audio OFF
+    | . &nbsp;Icons made by 
+    a(href='https://www.flaticon.com/authors/smashicons', title='Smashicons') Smashicons
+    | ,
+    a(href='https://www.flaticon.com/authors/those-icons' title='Those Icons') Those Icons
+    |   and 
+    a(href='http://www.freepik.com', title='Freepik') Freepik
+    |  from 
+    a(href='https://www.flaticon.com/', title='Flaticon') www.flaticon.com
+    |  licensed by 
+    a(href='http://creativecommons.org/licenses/by/3.0/', title='Creative Commons BY 3.0', target='_blank') CC 3.0 BY
 
-const VALID_COMMANDS = {
-  door: ['open', 'close', 'lock', 'unlock'],
-  lamp: ['on', 'off'],
-  bell: ['ring']
-};
 
-// Change the state of a dummy IoT device based on the command received.
-function actuateDevice(deviceId, command) {
-  debug('actuateDevice: ' + deviceId + ' ' + command);
-  switch (deviceId.replace(/\d/g, '')) {
-    case 'bell':
-      if (command === 'ring') {
-        setDeviceState(deviceId, BELL_ON, false);
-        SOCKET_IO.emit(deviceId, BELL_ON);
-      }
-      break;
-    case 'door':
-      if (command === 'open') {
-        setDeviceState(deviceId, DOOR_OPEN);
-      } else if (command === 'close' || command === 'unlock') {
-        setDeviceState(deviceId, DOOR_CLOSED);
-      } else if (command === 'lock') {
-        setDeviceState(deviceId, DOOR_LOCKED);
-      }
-      break;
-    case 'lamp':
-      if (command === 'on') {
-        setDeviceState(deviceId, LAMP_ON);
-      }
-      if (command === 'off') {
-        setDeviceState(deviceId, LAMP_OFF);
-      }
-      break;
-  }
-}
 
-// Set up 16 IoT devices, a door, bell, motion sensor and lamp for each of 4 locations.
-//
-// The door can be OPEN CLOSED or LOCKED
-// The bell can be ON or OFF - it does not report state.
-// The motion sensor counts the number of people passing by
-// The lamp can be ON or OFF. This also registers luminocity.
-// It will slowly dim as time passes (provided no movement is detected)
-function initDevices() {
-  debug('initDevices');
+  script.
+    $(function () {
+      const socket = io();
+      const snd = new Audio("data:audio/wav;base64,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qJrx4KOQjahZxWbcZgztj2c49nKmkId44S71j0c8eV9yDK6uPRzx5X18eDvjvQ6yKo9ZSS6l//8elePK/Lf//IInrOF/FvDoADYAGBMGb7FtErm5MXMlmPAJQVgWta7Zx2go+8xJ0UiCb8LHHdftWyLJE0QIAIsI+UbXu67dZMjmgDGCGl1H+vpF4NSDckSIkk7Vd+sxEhBQMRU8j/12UIRhzSaUdQ+rQU5kGeFxm+hb1oh6pWWmv3uvmReDl0UnvtapVaIzo1jZbf/pD6ElLqSX+rUmOQNpJFa/r+sa4e/pBlAABoAAAAA3CUgShLdGIxsY7AUABPRrgCABdDuQ5GC7DqPQCgbbJUAoRSUj+NIEig0YfyWUho1VBBBA//uQZB4ABZx5zfMakeAAAAmwAAAAF5F3P0w9GtAAACfAAAAAwLhMDmAYWMgVEG1U0FIGCBgXBXAtfMH10000EEEEEECUBYln03TTTdNBDZopopYvrTTdNa325mImNg3TTPV9q3pmY0xoO6bv3r00y+IDGid/9aaaZTGMuj9mpu9Mpio1dXrr5HERTZSmqU36A3CumzN/9Robv/Xx4v9ijkSRSNLQhAWumap82WRSBUqXStV/YcS+XVLnSS+WLDroqArFkMEsAS+eWmrUzrO0oEmE40RlMZ5+ODIkAyKAGUwZ3mVKmcamcJnMW26MRPgUw6j+LkhyHGVGYjSUUKNpuJUQoOIAyDvEyG8S5yfK6dhZc0Tx1KI/gviKL6qvvFs1+bWtaz58uUNnryq6kt5RzOCkPWlVqVX2a/EEBUdU1KrXLf40GoiiFXK///qpoiDXrOgqDR38JB0bw7SoL+ZB9o1RCkQjQ2CBYZKd/+VJxZRRZlqSkKiws0WFxUyCwsKiMy7hUVFhIaCrNQsKkTIsLivwKKigsj8XYlwt/WKi2N4d//uQRCSAAjURNIHpMZBGYiaQPSYyAAABLAAAAAAAACWAAAAApUF/Mg+0aohSIRobBAsMlO//Kk4soosy1JSFRYWaLC4qZBYWFRGZdwqKiwkNBVmoWFSJkWFxX4FFRQWR+LsS4W/rFRb/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////VEFHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU291bmRib3kuZGUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjAwNGh0dHA6Ly93d3cuc291bmRib3kuZGUAAAAAAAAAACU=");  
 
-  // Once a minute, read the existing state of the dummy devices
-  const deviceIds = myCache.keys();
-  let wait = 4000;
-  _.forEach(deviceIds, deviceId => {
-    wait = wait + 1999;
-    setTimeout(setUpSensorReading, wait, deviceId);
-  });
 
-  // Every few seconds, update the state of the dummy devices in a
-  // semi-random fashion.
-  setInterval(activateDoor, 4999);
-  // Every second, update the state of the dummy devices in a
-  // semi-random fashion.
-  setInterval(activateDevices, 997);
-}
+      $('span').each(function (index, value) { 
+        const device = $(this).attr('id'); 
+        socket.on( device, function(msg){
+          $('#' + device).text(msg);
+          const li = $('#' + device).parent().parent();
 
-let isDoorActive = false;
-let isDevicesActive = false;
-let devicesInitialized = false;
 
-myCache.set('door001', DOOR_LOCKED);
-myCache.set('door002', DOOR_LOCKED);
-myCache.set('door003', DOOR_LOCKED);
-myCache.set('door004', DOOR_LOCKED);
-
-myCache.set('bell001', BELL_OFF, false);
-myCache.set('bell002', BELL_OFF, false);
-myCache.set('bell003', BELL_OFF, false);
-myCache.set('bell004', BELL_OFF, false);
-
-myCache.set('lamp001', LAMP_OFF);
-myCache.set('lamp002', LAMP_OFF);
-myCache.set('lamp003', LAMP_OFF);
-myCache.set('lamp004', LAMP_OFF);
-
-myCache.set('motion001', NO_MOTION_DETECTED);
-myCache.set('motion002', NO_MOTION_DETECTED);
-myCache.set('motion003', NO_MOTION_DETECTED);
-myCache.set('motion004', NO_MOTION_DETECTED);
-
-// Open and shut an unlocked door
-function activateDoor() {
-  if (isDoorActive) {
-    return;
-  }
-
-  isDoorActive = true;
-  const deviceIds = myCache.keys();
-
-  _.forEach(deviceIds, deviceId => {
-    const state = getDeviceState(deviceId);
-    const isSensor = true;
-
-    switch (deviceId.replace(/\d/g, '')) {
-      case 'door':
-        //  The door is OPEN or CLOSED or LOCKED,
-        if (state.s !== 'LOCKED') {
-          // Randomly open and close the door if not locked.
-          // lower the rate if the lamp is off.
-          const rate = getLampState(deviceId, 'door') === 'ON' ? 3 : 6;
-          state.s = getRandom() > rate ? 'OPEN' : 'CLOSED';
-        }
-        setDeviceState(deviceId, toUltraLight(state), isSensor);
-        break;
-    }
-  });
-  isDoorActive = false;
-}
-
-// Update state of Lamps, Doors and Motion Sensors
-function activateDevices() {
-  if (isDevicesActive) {
-    return;
-  }
-
-  isDevicesActive = true;
-
-  const deviceIds = myCache.keys();
-
-  _.forEach(deviceIds, deviceId => {
-    const state = getDeviceState(deviceId);
-    let isSensor = true;
-
-    switch (deviceId.replace(/\d/g, '')) {
-      case 'bell':
-        // ON or OFF - Switch off the bell if it is still ringing
-        if (state.s === 'ON') {
-          state.s = 'OFF';
-        }
-        isSensor = false;
-        break;
-
-      case 'motion':
-        // If the door is OPEN, randomly switch the count of the motion sensor
-        if (getDoorState(deviceId, 'motion') === 'OPEN') {
-          if (state.c === 1) {
-            state.c = 0;
-          } else {
-            state.c = getRandom() > 3 ? 1 : 0;
+          switch (device.replace(/\d/g, '')){
+            case "door":
+              if (msg ==='s|OPEN'){
+                li.css( "background-image", "url('/img/door-open.svg')");
+              } else  if (msg ==='s|CLOSED'){
+                li.css( "background-image", "url('/img/door-closed.svg')");
+              } else {
+                li.css( "background-image", "url('/img/door-locked.svg')" );
+              }
+              break;
+            case "bell":
+              // ON or OFF - Switch off the bell if it is still ringing
+              if (msg ==='s|ON'){
+                 li.css( "background-image", "url('/img/bell-on.svg')");
+                beep();
+              } else {
+                li.css( "background-image", "url('/img/bell-off.svg')" );
+              }
+              break;
+            case "motion":
+              // ON or OFF - Switch off the bell if it is still ringing
+              if (msg ==='c|0'){
+                 li.css( "background-image", "url('/img/motion-sensor.svg')");
+              } else {
+                li.css( "background-image", "url('/img/motion-sensor-active.svg')" );
+              }
+              break;        
+            case "lamp":
+              if (msg.includes('s|ON')){
+                li.css( "background-image", "url('/img/lamp-on.svg')");
+              } else {
+                li.css( "background-image", "url('/img/lamp-off.svg')" );
+              }
+              break;  
           }
-        } else {
-          state.c = 0;
+        });
+      });
+
+      socket.on( 'http', function(msg){
+          // If we receive a northbound notification, list it on screen
+           const htmlString = '<li>' + moment().format('LTS') + ' ' +
+           '<b>HTTP</b> <code>'  + msg +  '</code>';
+          $('#northbound').append(htmlString);
+          if($('#northbound li').size() > 5){
+              $('#northbound li').first().remove();
+          }
+      });
+
+      socket.on( 'mqtt', function(msg){
+        moment().format('LTS')
+          // If we receive a northbound notification, list it on screen
+           const htmlString = '<li>' + moment().format('LTS') + ' ' +
+           '<b>MQTT</b> <code>'  + msg +  '</code>';
+          $('#northbound').append(htmlString);
+          if($('#northbound li').size() > 5){
+              $('#northbound li').first().remove();
+          }
+      });
+
+      var playAudio = false;
+      $( "body" ).click(function() {
+         $('#audio').text("Audio ON");
+        playAudio = true;
+      });
+
+      $("form.device").submit(function(event){
+        event.preventDefault();
+        var serializedData = $(this).serialize();
+        $.ajax({
+            url: "/device/command",
+            type: "post",
+            data: serializedData,
+            error: function (xhr, ajaxOptions, thrownError) {
+              alert('ACCESS DENIED');
+            }
+        });
+      });
+
+      function beep() {
+        if(playAudio){
+          snd.play();
         }
-        setDeviceState(deviceId, toUltraLight(state), isSensor);
-        break;
-
-      case 'lamp':
-        if (state.s === 'OFF') {
-          state.l = 0;
-        } else if (getDoorState(deviceId, 'lamp') === 'OPEN') {
-          // if the door is open set the light to full power
-          state.l = parseInt(state.l) || 1000;
-          state.l = state.l + getRandom() * getRandom();
-          if (state.l < 1850) {
-            state.l = state.l + 30 + getRandom() * getRandom();
-          }
-          if (state.l > 1990) {
-            state.l = 1990 + getRandom();
-          }
-        } else if (state.l > 1000) {
-          // if the door is closed dim the light
-          state.l = parseInt(state.l) || 1990;
-          if (getRandom() > 3) {
-            state.l = state.l - 30 - getRandom() * getRandom();
-          }
-          state.l = state.l + getRandom();
-        }
-        break;
-    }
-
-    setDeviceState(deviceId, toUltraLight(state), isSensor);
-  });
-  isDevicesActive = false;
-}
-
-// Read the existing state of the dummy devices when requested.
-function sendDeviceReading(deviceId) {
-  const state = toUltraLight(getDeviceState(deviceId));
-  const isSensor = deviceId.replace(/\d/g, '') !== 'bell';
-  setDeviceState(deviceId, state, isSensor, true);
-}
-
-//
-// Transformation function from Ultralight Protocol to an object
-// Ultralight is a series of pipe separated key-value pairs.
-// Each key and value is in turn separated by a pipe character
-//
-// e.g. s|ON|l|1000 becomes
-// { s: 'ON', l: '1000'}
-//
-function getDeviceState(deviceId) {
-  const ultraLight = myCache.get(deviceId);
-  const obj = {};
-  if(!ultraLight){
-    return obj;
-  }
-  const keyValuePairs = ultraLight.split('|');
-  for (let i = 0; i < keyValuePairs.length; i = i + 2) {
-    obj[keyValuePairs[i]] = keyValuePairs[i + 1];
-  }
-  return obj;
-}
-//
-// Sets the device state in the in-memory cache. If the device is a sensor
-// it also reports (and attempts to send) the northbound traffic to the IoT agent.
-// The state of the dummy device is also sent to the browser for display
-//
-function setDeviceState(deviceId, state, isSensor = true, force = false) {
-  const previousState = myCache.get(deviceId);
-  myCache.set(deviceId, state);
-
-  if (!devicesInitialized) {
-    initDevices();
-    devicesInitialized = true;
-  }
-
-  // If we are running under HTTP mode the device will respond with a result
-  // If we are running under MQTT mode the device will post the result as a topic
-  if (isSensor && (state !== previousState || force)) {
-    Northbound.sendMeasure(deviceId, state);
-   // Southbound.lampHttpCommand(req, res);
-  }
-
-  SOCKET_IO.emit(deviceId, state);
-}
-
-// Transformation function from a state object to the Ultralight Protocol
-// Ultralight is a series of pipe separated key-value pairs.
-// Each key and value is in turn separated by a pipe character
-//
-// e.g. s|ON,l|1000
-function toUltraLight(object) {
-  const strArray = [];
-  _.forEach(object, function(value, key) {
-    strArray.push(key + '|' + value);
-  });
-  return strArray.join('|');
-}
-
-// Return the state of the door with the same number as the current element
-// this is because no people will enter if the door is LOCKED, and therefore
-// both the motion sensor will not increment an the smart lamp will slowly
-// decrease
-function getDoorState(deviceId, type) {
-  const door = getDeviceState(deviceId.replace(type, 'door'));
-  return door.s || 'LOCKED';
-}
-
-// Return the state of the lamp with the same number as the current element
-// this is because fewer people will enter the building if the lamp is OFF,
-// and therefore the motion sensor will increment more slowly
-function getLampState(deviceId, type) {
-  const lamp = getDeviceState(deviceId.replace(type, 'lamp'));
-  return lamp.s || 'OFF';
-}
-
-// Pick a random number between 1 and 10
-function getRandom() {
-  return Math.floor(Math.random() * 10) + 1;
-}
-
-// Directly alter the state of a motion sensor.
-function fireMotionSensor(id,motionCounter) {
-  debug('fireMotionSensor');
-  setDeviceState(id, "c|"+ motionCounter, true);
-}
-
-// Once a minute, read the existing state of the dummy devices
-function setUpSensorReading(deviceId) {
-  const deviceType = deviceId.replace(/\d/g, '');
-  if (deviceType === 'lamp' || deviceType === 'motion') {
-    setInterval(sendDeviceReading, 59999, deviceId);
-  }
-}
-
-// Check to see if a deviceId has a corresponding entry in the cache
-function notFound(deviceId) {
-  const deviceUnknown = _.indexOf(myCache.keys(), deviceId) === -1;
-  if (deviceUnknown) {
-    debug('Unknown IoT device: ' + deviceId);
-  }
-  return deviceUnknown;
-}
-
-// Check to see if a command can be processed by a class of devices
-function isUnknownCommand(device, command) {
-  const invalid = _.indexOf(VALID_COMMANDS[device], command) === -1;
-  if (invalid) {
-    debug('Invalid command for a ' + device + ': ' + command);
-  }
-  return invalid;
-}
-
-module.exports = {
-  actuateDevice,
-  fireMotionSensor,
-  notFound,
-  isUnknownCommand
-};
+      }
+    });
 

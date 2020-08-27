@@ -1,8 +1,8 @@
-mixin devicesForStore(id)
+mixin devicesForStore(id,name)
   p(style="color:#000000;")
     strong Devices on Streetlight 
       br
-      code(style="font-size:large") urn:ngsi-ld:Streetlight:streetlight:#{id}
+      code(style="font-size:large") #{name}
       br
   ul.devices
     .btn-group(style="background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,0.5917717428768383) 35%, rgba(0,212,255,1) 100%); border: 1px solid green; color: white; padding: 10px 15px; cursor: pointer; float: left;border-radius:10%;margin:5px")

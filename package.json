@@ -23,12 +23,15 @@
     "node": ">=8.6"
   },
   "dependencies": {
+    "axios": "^0.20.0",
     "body-parser": "^1.19.0",
     "connect-flash": "^0.1.1",
     "cookie-parser": "~1.4.5",
     "debug": "~4.1.1",
     "express": "~4.17.1",
     "express-session": "^1.17.1",
+    "forever": "^3.0.2",
+    "fs": "0.0.1-security",
     "http-errors": "^1.8.0",
     "jsonld": "^3.1.1",
     "jsonwebtoken": "^8.5.1",
@@ -39,11 +42,14 @@
     "mqtt": "^4.1.0",
     "ngsi_v2": "0.1.0",
     "node-cache": "^5.1.2",
+    "node-fetch": "^2.6.0",
     "parse-links": "^0.1.0",
     "pug": "3.0.0",
     "request": "^2.88.2",
     "request-promise": "^4.2.6",
     "socket.io": "^2.3.0",
+    "supervisor": "^0.12.0",
+    "system-sleep": "^1.3.6",
     "twitter": "^1.7.1",
     "xml-parser": "^1.2.1",
     "xml2js": "^0.4.23"
@@ -57,7 +63,7 @@
     "prettier": "^2.0.5"
   },
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "supervisor start --extensions 'node,js,/bin/www,json' ./bin/www",
     "lint": "eslint . --cache --fix",
     "prettier": "prettier --parser flow --config .prettierrc.json --write **/**/*.js  **/*.js *.js",
     "test": "eslint ."

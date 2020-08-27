@@ -1,0 +1,24 @@
+curl -s -o /dev/null -X POST \
+  'http://iot-agent:4041/iot/devices' \
+  -H 'Content-Type: application/json' \
+  -H 'fiware-service: openiot' \
+  -H 'fiware-servicepath: /' \
+  -g -d '{
+ "devices": [
+   {
+     "device_id":   "motiondevice_id1",
+     "entity_name": "urn:ngsi-ld:Motion:device_id1",
+     "entity_type": "Motion",
+     "timezone":    "Europe/Berlin",
+     "attributes": [
+       { "object_id": "c", "name": "count", "type": "Integer" }
+     ],
+     "static_attributes": [
+       { "name":"refStore", "type": "Relationship", "value": "urn:ngsi-ld:Streetlight:streetlight:device_id1"}
+     ]
+   }
+ ]
+}
+'
+
+

@@ -1,0 +1,103 @@
+//
+// This controller is simulates a series of devices.
+// The internal state is maintained using the Ultralight protocol
+//
+
+/* global SOCKET_IO */
+
+const NodeCache = require('node-cache');
+const myCache = new NodeCache();
+const _ = require('lodash');
+const debug = require('debug')('tutorial:devices');
+const Northbound = require('../controllers/iot/northbound');
+
+// A series of constants used by our set of devices
+const DOOR_LOCKED = 's|LOCKED';
+const DOOR_OPEN = 's|OPEN';
+const DOOR_CLOSED = 's|CLOSED';
+
+const BELL_OFF = 's|OFF';
+const BELL_ON = 's|ON';
+
+const LAMP_ON = 's|ON|l|1750';
+const LAMP_OFF = 's|OFF|l|0';
+
+const NO_MOTION_DETECTED = 'c|0';
+const MOTION_DETECTED = 'c|1';
+
+const VALID_COMMANDS = {
+    door: ['open', 'close', 'lock', 'unlock'],
+    lamp: ['on', 'off'],
+    bell: ['ring']
+};
+
+// Change the state of a dummy IoT device based on the command received.
+function actuateDevice(deviceId, command) {
+    debug('actuateDevice: ' + deviceId + ' ' + command);
+    switch (deviceId.replace(/\d/g, '')) {
+        case 'bell':
+            if (command === 'ring') {
+                setDeviceState(deviceId, BELL_ON, false);
+                SOCKET_IO.emit(deviceId, BELL_ON);
+            }
+            break;
+        case 'door':
+            if (command === 'open') {
+                setDeviceState(deviceId, DOOR_OPEN);
+            } else if (command === 'close' || command === 'unlock') {
+                setDeviceState(deviceId, DOOR_CLOSED);
+            } else if (command === 'lock') {
+                setDeviceState(deviceId, DOOR_LOCKED);
+            }
+            break;
+        case 'lamp':
+            if (command === 'on') {
+                setDeviceState(deviceId, LAMP_ON);
+            }
+            if (command === 'off') {
+                setDeviceState(deviceId, LAMP_OFF);
+            }
+            break;
+    }
+}
+
+// Set up 16 IoT devices, a door, bell, motion sensor and lamp for each of 4 locations.
+//
+// The door can be OPEN CLOSED or LOCKED
+// The bell can be ON or OFF - it does not report state.
+// The motion sensor counts the number of people passing by
+// The lamp can be ON or OFF. This also registers luminocity.
+// It will slowly dim as time passes (provided no movement is detected)
+function initDevices() {
+    debug('initDevices');
+
+    // Once a minute, read the existing state of the dummy devices
+    const deviceIds = myCache.keys();
+    let wait = 4000;
+    _.forEach(deviceIds, (deviceId) => {
+        wait = wait + 1999;
+        setTimeout(setUpSensorReading, wait, deviceId);
+    });
+
+    // Every few seconds, update the state of the dummy devices in a
+    // semi-random fashion.
+    setInterval(activateDoor, 4999);
+    // Every second, update the state of the dummy devices in a
+    // semi-random fashion.
+    setInterval(activateDevices, 997);
+}
+
+let isDoorActive = false;
+let isDevicesActive = false;
+let devicesInitialized = false;
+
+myCache.set('door001', DOOR_LOCKED);
+myCache.set('door002', DOOR_LOCKED);
+myCache.set('door003', DOOR_LOCKED);
+myCache.set('door004', DOOR_LOCKED);
+
+myCache.set('bell001', BELL_OFF, false);
+myCache.set('bell002', BELL_OFF, false);
+myCache.set('bell003', BELL_OFF, false);
+myCache.set('bell004', BELL_OFF, false);
+

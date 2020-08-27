@@ -1,0 +1,59 @@
+//
+// This controller is a backdoor which allows a user to directly
+// interact with the IoT devices by pressing a button on screen.
+// The button press is converted to an NGSI call to the context
+// broker.
+//
+
+const request = require('request');
+const debug = require('debug')('tutorial:command-listener');
+const Security = require('../security');
+const IoTDevices = require('../../models/devices');
+
+// Connect to the context broker and use fallback values if necessary
+const CONTEXT_BROKER = process.env.CONTEXT_BROKER || 'http://localhost:1026/v2';
+const DEVICE_BROKER = process.env.DEVICE_BROKER || CONTEXT_BROKER;
+const NGSI_VERSION = process.env.NGSI_VERSION || 'ngsi-v2';
+const NGSI_PREFIX =
+  process.env.NGSI_LD_PREFIX !== undefined
+    ? process.env.NGSI_LD_PREFIX
+    : 'urn:ngsi-ld:';
+const AUTHZFORCE_ENABLED = process.env.AUTHZFORCE_ENABLED || false;
+
+function createNGSIv2Request(action, id) {
+  const method = 'PATCH';
+  const body = {};
+  const headers = {
+    'Content-Type': 'application/json',
+    'fiware-servicepath': '/',
+    'fiware-service': 'openiot'
+  };
+  const url = DEVICE_BROKER + '/entities/' + NGSI_PREFIX + id + '/attrs';
+
+  body[action] = {
+    type: 'command',
+    value: ''
+  };
+
+  return { method, url, headers, body, json: true };
+}
+
+function createNGSILDRequest(action, id) {
+  const method = 'PATCH';
+  const body = {
+    type: 'Property',
+    value: ' '
+  };
+  const url =
+    DEVICE_BROKER + '/entities/' + NGSI_PREFIX + id + '/attrs/' + action;
+  const headers = {
+    'Content-Type': 'application/json',
+    'NGSILD-Tenant': 'openiot',
+    'NGSILD-Path': '/',
+    'fiware-service': 'openiot',
+    'fiware-servicepath': '/'
+  };
+
+  return { method, url, headers, body, json: true };
+}
+

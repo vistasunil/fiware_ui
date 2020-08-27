@@ -1,0 +1,18 @@
+[
+  {
+    "href": "urn:ngsi-ld:Streetlight:streetlight:mexico:4567",
+    "name": "mexico 4567"
+  },
+  {
+    "href": "urn:ngsi-ld:Streetlight:streetlight:guadalajara:4567",
+    "name": "guadalajara 4567"
+  },
+  {
+    "href": "urn:ngsi-ld:Streetlight:streetlight:mexico:9000",
+    "name": "mexico 9000"
+  },
+  {
+    "href": "urn:ngsi-ld:Streetlight:streetlight:mexico:9000",
+    "name": "mexico 9000"
+  }
+]
