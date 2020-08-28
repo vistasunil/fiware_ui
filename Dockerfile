@@ -38,5 +38,4 @@ COPY . .
 #EXPOSE 8080
 
 #CMD [ "sh", "-c", "npm start &&  /usr/sbin/cron -f" ]
-CMD cron && npm start 
-#/usr/src/app/fetch.sh && npm start
+CMD cron && (/usr/src/app/fetch.sh&) && npm start

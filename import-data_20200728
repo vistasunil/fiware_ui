@@ -197,6 +197,65 @@ curl -s -o /dev/null -X POST \
 }'
 
 
+curl -s -o /dev/null -X POST \
+  'http://'"${CONTEXT_BROKER}"'/ngsi-ld/v1/entities/' \
+  -H 'Content-Type: application/ld+json' \
+  -d '{
+    "id": "urn:ngsi-ld:Streetlight:streetlight:mexico:9000",
+    "type": "Streetlight",
+    "location": {
+        "type": "GeoProperty",
+        "value": {
+            "type": "Point",
+            "coordinates": [
+                -3.164585591715449,
+                40.62885133667262
+            ]
+        }
+    },
+    "areaServed": {
+        "type": "Property",
+        "value": "Roundabouts city entrance"
+    },
+    "status": {
+        "type": "Property",
+        "value": "ok"
+    },
+    "refStreetlightModel": {
+        "type": "Relationship",
+        "object": "urn:ngsi-ld:StreetlightModel:streetlightmodel:STEEL_Tubular_10m"
+    },
+    "circuit": {
+        "type": "Property",
+        "value": "C-456-A467"
+    },
+    "lanternHeight": {
+        "type": "Property",
+        "value": 10
+    },
+    "locationCategory": {
+        "type": "Property",
+        "value": "centralIsland"
+    },
+    "powerState": {
+        "type": "Property",
+        "value": "off"
+    },
+    "controllingMethod": {
+        "type": "Property",
+        "value": "individual"
+    },
+    "dateLastLampChange": {
+        "type": "Property",
+        "value": {
+            "@type": "DateTime",
+            "@value": "2016-07-08T08:02:21.753Z"
+        }
+    },
+    "@context": [
+        "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context.jsonld"
+    ]
+}'
 #
 # Create a series of Shelf Entities and to be placed in each Store.
 # Each shelf is designed to hold one product.
@@ -398,6 +457,31 @@ curl -s -o /dev/null -X POST \
     },
     "locatedIn" : {
       "type": "Relationship", "object": "urn:ngsi-ld:Streetlight:streetlight:mexico:5000",
+      "requestedBy": {"type": "Relationship", "object": "urn:ngsi-ld:Person:bob-the-manager"},
+      "installedBy": {"type": "Relationship", "object": "urn:ngsi-ld:Person:employee001"},
+      "statusOfWork": {"type": "Property", "value": "completed"}
+    },
+    "@context": "'"${TUTORIAL_DATA_MODELS_CONTEXT}"'"
+}'
+
+curl -s -o /dev/null -X POST \
+  'http://'"${CONTEXT_BROKER}"'/ngsi-ld/v1/entities/' \
+  -H 'Content-Type: application/ld+json' \
+  -d '{
+    "id": "urn:ngsi-ld:Shelf:unit009",
+    "type": "Shelf",
+    "location": {
+      "type": "GeoProperty",
+      "value": {"type": "Point", "coordinates": [13.444711,52.503122]}
+    },
+    "maxCapacity": {"type": "Property", "value": 50},
+    "numberOfItems": {"type": "Property", "value": 50},
+    "name": {"type": "Property", "value": "Corner Unit"},
+    "stocks": {
+      "type": "Relationship", "object": "urn:ngsi-ld:Product:009"
+    },
+    "locatedIn" : {
+      "type": "Relationship", "object": "urn:ngsi-ld:Streetlight:streetlight:mexico:9000",
       "requestedBy": {"type": "Relationship", "object": "urn:ngsi-ld:Person:bob-the-manager"},
       "installedBy": {"type": "Relationship", "object": "urn:ngsi-ld:Person:employee001"},
       "statusOfWork": {"type": "Property", "value": "completed"}
@@ -692,6 +776,27 @@ curl -s -o /dev/null -X POST \
     },
     "@context": "'"${TUTORIAL_DATA_MODELS_CONTEXT}"'"
 }'
+#
+# Create a series of InventoryItems Entities. 
+# These the drinks on order in Store:004
+#
+curl -s -o /dev/null -X POST \
+  'http://'"${CONTEXT_BROKER}"'/ngsi-ld/v1/entities/' \
+  -H 'Content-Type: application/ld+json' \
+  -d '{
+    "id": "urn:ngsi-ld:StockOrder:010",
+    "type": "StockOrder",
+    "requestedFor": {"type": "Relationship", "object": "urn:ngsi-ld:Streetlight:streetlight:mexico:9000"},
+    "requestedBy": {"type": "Relationship", "object": "urn:ngsi-ld:Person:bob-the-manager"},
+    "orderedProduct": {"type": "Relationship", "object": "urn:ngsi-ld:Product:001"},
+    "stockCount": {"type": "Property", "value": 10000},
+    "orderDate": {
+      "type": "Property", 
+      "value": { "@type": "DateTime", "@value": "2018-08-07T12:00:00Z"}
+    },
+    "@context": "'"${TUTORIAL_DATA_MODELS_CONTEXT}"'"
+}'
+
 
 
 echo -e " \033[1;32mStreetlight and entities create successfully!!\033[0m"

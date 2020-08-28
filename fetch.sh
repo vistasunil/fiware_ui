@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for (( i=0; i < 60; i=i+5 ));
+for (( i=0; i < 60; i=i+4 ));
 do
 cd /usr/src/app
 /usr/local/bin/node public/store.js
@@ -9,7 +9,7 @@ diff response.json response.json1
 if [ $? -ne 0 ]; then
        	cp response.json1 response.json;
 #	ids=$(cat response.json|tr -s ',' '\n'|grep name|awk -F'[: }"]' '{print $6}')
-	names=$(cat response.json|tr -s ',' '\n'|grep href|awk -F'[/"]' '{print $6}')
+	names=$(cat response.json|tr -s ',' '\n'|grep href|awk -F'[-"]' '{print $5}'|sed 's/^ld://g')
 	cat device-monitor.tmp > tmp
 	cat iot_token.tmp > iot_tmp
 	cat command-listener.tmp > command-listener_tmp
@@ -39,8 +39,8 @@ if [ $? -ne 0 ]; then
 	cp command-listener_tmp controllers/iot/command-listener.js
 	cp devices_tmp models/devices.js
 	sh iot_tmp
-else 
-	echo OK; 
+#else 
+#	echo OK; 
 fi
 	sleep 2
 done
